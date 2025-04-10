@@ -7,12 +7,13 @@ import {
   ScrollRestoration,
 } from "react-router";
 
-import type { Route } from "./+types/root";
+import type {Route} from "./+types/root";
 import "./app.css";
 import Background from "./components/Background";
+import Navbar from "./components/Navbar";
 
 export const links: Route.LinksFunction = () => [
-  { rel: "preconnect", href: "https://fonts.googleapis.com" },
+  {rel: "preconnect", href: "https://fonts.googleapis.com"},
   {
     rel: "preconnect",
     href: "https://fonts.gstatic.com",
@@ -28,20 +29,20 @@ export const links: Route.LinksFunction = () => [
   },
 ];
 
-export function Layout({ children }: { children: React.ReactNode }) {
+export function Layout({children}: { children: React.ReactNode }) {
   return (
     <html lang="th">
-      <head>
-        <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <Meta />
-        <Links />
-      </head>
-      <body>
-        {children}
-        <ScrollRestoration />
-        <Scripts />
-      </body>
+    <head>
+      <meta charSet="utf-8"/>
+      <meta name="viewport" content="width=device-width, initial-scale=1"/>
+      <Meta/>
+      <Links/>
+    </head>
+    <body>
+    {children}
+    <ScrollRestoration/>
+    <Scripts/>
+    </body>
     </html>
   );
 }
@@ -49,17 +50,18 @@ export function Layout({ children }: { children: React.ReactNode }) {
 export default function App() {
   return (
     <>
-      <Background />
-      <Outlet />
+      <Background/>
+      <Navbar/>
+      <Outlet/>
     </>
   );
 }
 
-export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
+export function ErrorBoundary({error}: Route.ErrorBoundaryProps) {
   let message = "Oops!";
   let details = "An unexpected error occurred.";
   let stack: string | undefined;
-
+  
   if (isRouteErrorResponse(error)) {
     message = error.status === 404 ? "404" : "Error";
     details =
@@ -70,7 +72,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
     details = error.message;
     stack = error.stack;
   }
-
+  
   return (
     <main className="pt-16 p-4 container mx-auto">
       <h1>{message}</h1>
