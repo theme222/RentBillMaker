@@ -12,6 +12,7 @@
     "@react-router/node": "^7.5.0",
     "@react-router/serve": "^7.5.0",
     "daisyui": "^5.0.16",
+    "html2pdf.js": "^0.10.3",
     "isbot": "^5.1.17",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
