@@ -2,6 +2,8 @@ import PageTitle from "../components/PageTitle";
 import GridLayout from "~/components/GridLayout";
 import React, {type ReactElement, type ReactNode, useEffect, useState} from "react";
 
+import {type ReactState} from "~/types/EsotericReactTypes";
+
 const currentDate = new Date();
 const currentMonth = currentDate.getMonth();
 const currentYear = currentDate.getFullYear() + 543;
@@ -114,7 +116,7 @@ function DateSetter({monthYear, setMonthYear}: {
 function ValueSetter({name, value, setValue}: {
   name: string,
   value: PriceValues_t,
-  setValue: React.Dispatch<React.SetStateAction<PriceValues_t>>
+  setValue: ReactState<PriceValues_t> 
 })
 {
   const HandlePriceChange = (newValue: number) =>
@@ -137,8 +139,7 @@ function ValueSetter({name, value, setValue}: {
 }
 
 
-// @ts-ignore
-function DynamicValueSetter({name, rentList, setRentList, apartmentName})
+function DynamicValueSetter({name, rentList, setRentList, apartmentName} : {name: string, rentList: { [key: string]: Apartment_t }, setRentList: ReactState<{ [key: string]: Apartment_t }>, apartmentName: string})
 {
   const [unitAfter, setUnitAfter] = useState<number>(0);
   
@@ -157,7 +158,7 @@ function DynamicValueSetter({name, rentList, setRentList, apartmentName})
   
   useEffect(() =>
   {
-    if (rentList[apartmentName]) setUnitAfter(rentList[apartmentName][name]);
+    if (rentList[apartmentName]) setUnitAfter(rentList[apartmentName][name] as number);
     else setUnitAfter(0);
   }, [apartmentName, rentList])
   
@@ -177,8 +178,7 @@ function DynamicValueSetter({name, rentList, setRentList, apartmentName})
   )
 }
 
-// @ts-ignore
-function NameSetter({rentList, setRentList, apartmentName})
+function NameSetter({rentList, setRentList, apartmentName} : {rentList: { [key: string]: Apartment_t }, setRentList: ReactState<{ [key: string]: Apartment_t }>, apartmentName: string})
 {
   const [name, setName] = useState<string>("");
   
@@ -257,7 +257,7 @@ function Card1Content()
   )
 }
 
-function Card2Content({apartmentName, setApartmentName})
+function Card2Content({apartmentName, setApartmentName} : { apartmentName: string, setApartmentName: React.Dispatch<React.SetStateAction<string>> })
 {
   const buildingSelect = apartmentBuildings.map(name => <option key={name}>{name}</option>);
   const floorSelect = apartmentFloors.map(name => <option key={name}>{name}</option>);
@@ -326,10 +326,9 @@ function Card2Content({apartmentName, setApartmentName})
       </div>
     </>
   )
-  
 }
 
-function RentTableInfo({setApartmentName})
+function RentTableInfo({setApartmentName} : { setApartmentName: ReactState<string>})
 {
   const roomNameElements = roomNames.map((e) => <th key={e} className="underline cursor-pointer" onClick={() => setApartmentName(e)}>{e}</th>);
   const [electric, setElectric] = useState<ReactElement[]>([]);
