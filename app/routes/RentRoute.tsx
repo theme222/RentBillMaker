@@ -1,6 +1,7 @@
 import PageTitle from "../components/PageTitle";
 import GridLayout from "~/components/GridLayout";
 import React, {type ReactElement, type ReactNode, useEffect, useState} from "react";
+import {type Apartment_t, type PriceValues_t, apartmentBuildings, apartmentFloors, apartmentNumbers, apartmentNames} from "~/types/ApartmentTypes";
 
 import {type ReactState} from "~/types/EsotericReactTypes";
 
@@ -8,45 +9,11 @@ const currentDate = new Date();
 const currentMonth = currentDate.getMonth();
 const currentYear = currentDate.getFullYear() + 543;
 
-interface PriceValues_t
-{
-  "ค่าเช่า": number;
-  "ค่าบริการส่วนกลาง": number;
-  "ค่าจัดการขยะมูลฝอย": number;
-  "ราคาไฟฟ้า (ต่อ unit)": number;
-  "ราคาน้ำ (ต่อ unit)": number;
-  
-  [key: string]: number;
-}
-
 interface MonthYear_t
 {
   "month": string;
   "year": number;
 }
-
-interface Apartment_t
-{
-  "ค่าไฟฟ้า": number;
-  "ค่าน้ำประปา": number;
-  "นาม": string;
-  
-  [key: string]: number | string;
-}
-
-const apartmentBuildings: string[] = ["A", "B"];
-const apartmentFloors: string[] = ["1", "2", "3"];
-const apartmentNumbers: string[] = [
-  "01", "02", "03", "04", "05", "06", "07",
-  "08", "09", "10", "11", "12", "13", "14",
-  "15", "16", "17", "18", "19", "20", "21"
-]; // I don't want to hear any complaints
-
-const roomNames: string[] = [];
-for (let building of apartmentBuildings)
-  for (let floor of apartmentFloors)
-    for (let num of apartmentNumbers)
-      roomNames.push(building + floor + num); // Yes.
 
 const defaultPriceValues: PriceValues_t = {
   "ค่าเช่า": 1200,
@@ -70,7 +37,6 @@ const thaiMonths: string[] = [
   "พฤศจิกายน",
   "ธันวาคม"
 ];
-
 
 function DateSetter({monthYear, setMonthYear}: {
   monthYear: MonthYear_t,
@@ -330,7 +296,7 @@ function Card2Content({apartmentName, setApartmentName} : { apartmentName: strin
 
 function RentTableInfo({setApartmentName} : { setApartmentName: ReactState<string>})
 {
-  const roomNameElements = roomNames.map((e) => <th key={e} className="underline cursor-pointer" onClick={() => setApartmentName(e)}>{e}</th>);
+  const roomNameElements = apartmentNames.map((e) => <th key={e} className="underline cursor-pointer" onClick={() => setApartmentName(e)}>{e}</th>);
   const [electric, setElectric] = useState<ReactElement[]>([]);
   const [water, setWater] = useState<ReactElement[]>([]);
   const [name, setName] = useState<ReactElement[]>([]);
@@ -344,7 +310,7 @@ function RentTableInfo({setApartmentName} : { setApartmentName: ReactState<strin
       let newName: ReactElement[] = [];
       
       const rentList = JSON.parse(localStorage.getItem("rentList") as string);
-      for (let name of roomNames)
+      for (let name of apartmentNames)
       {
         let currentElectric: number = 0;
         let currentWater: number = 0;
@@ -407,7 +373,7 @@ export default function RentRoute()
   
   return (
     <GridLayout>
-      <PageTitle pageName="ตั้งค่าเช่า"/>
+      <PageTitle pageName="ตั้งค่าเริ่มต้น"/>
       <div className="flex justify-center items-center w-full h-120">
         <div className="flex justify-center items-center w-11/12 h-full gap-10">
           <Card>
