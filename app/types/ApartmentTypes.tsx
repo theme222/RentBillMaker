@@ -1,3 +1,56 @@
+class GlobalFees 
+{
+  public static rent: number = 1200;
+  public static serviceFee: number = 750;
+  public static wasteFee: number = 40;
+  public static electricityPerUnit: number = 9;
+  public static waterPerUnit: number = 35;
+
+  public static Sync()
+  {
+    localStorage.setItem("priceValues", JSON.stringify(this));
+  }
+
+  public static Load()
+  {
+    const loaded = localStorage.getItem("priceValues");
+    if (loaded) 
+    {
+      const parsed = JSON.parse(loaded);
+      this.rent = parsed.rent;
+      this.serviceFee = parsed.serviceFee;
+      this.wasteFee = parsed.wasteFee;
+      this.electricityPerUnit = parsed.electricityPerUnit;
+      this.waterPerUnit = parsed.waterPerUnit;
+    }
+  }
+}
+
+class Apartment
+{
+  roomName: string = "";
+  name: string = "";
+  electricity: number = 0;
+  water: number = 0;
+  miscillaneous?: {[key: string]: number};
+
+  constructor( roomName?: string, name?: string, electricity?: number, water?: number, miscillaneous?: {[key: string]: number})
+  {
+    if (roomName) this.roomName = roomName;
+    if (name) this.name = name;
+    if (electricity) this.electricity = electricity;
+    if (water) this.water = water;
+    if (miscillaneous) this.miscillaneous = miscillaneous;
+  }
+
+  public static Load(obj: any): Apartment
+  {
+    const apartment = new Apartment(obj.roomName, obj.name, obj.electricity, obj.water, obj.miscillaneous);
+    return apartment 
+  }
+}
+
+
 
 export interface Apartment_t
 {
