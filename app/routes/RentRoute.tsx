@@ -1,46 +1,18 @@
-import PageTitle from "../components/PageTitle";
+import PageTitle from "~/components/PageTitle";
 import GridLayout from "~/components/GridLayout";
-import React, {type ReactElement, type ReactNode, useEffect, useState} from "react";
-import {type Apartment_t, type PriceValues_t, apartmentBuildings, apartmentFloors, apartmentNumbers, apartmentNames} from "~/types/ApartmentTypes";
-
+import React, {type ReactElement, type ReactNode, useEffect, useState, useContext, createContext} from "react";
+import {type Apartment_t, type PriceValues_t, apartmentBuildings, apartmentFloors, apartmentNumbers, apartmentNames, Apartment, GlobalFees} from "~/types/ApartmentTypes";
+import { thaiMonths, type MonthYear_t} from "~/types/DateTypes";
 import {type ReactState} from "~/types/EsotericReactTypes";
+import { EnlgishToThai } from "~/functions/InToOutTranslator";
 
 const currentDate = new Date();
 const currentMonth = currentDate.getMonth();
 const currentYear = currentDate.getFullYear() + 543;
 
-interface MonthYear_t
-{
-  "month": string;
-  "year": number;
-}
-
-const defaultPriceValues: PriceValues_t = {
-  "ค่าเช่า": 1200,
-  "ค่าบริการส่วนกลาง": 750,
-  "ค่าจัดการขยะมูลฝอย": 40,
-  "ราคาไฟฟ้า (ต่อ unit)": 9,
-  "ราคาน้ำ (ต่อ unit)": 35,
-}
-
-const thaiMonths: string[] = [
-  "มกราคม",
-  "กุมภาพันธ์",
-  "มีนาคม",
-  "เมษายน",
-  "พฤษภาคม",
-  "มิถุนายน",
-  "กรกฎาคม",
-  "สิงหาคม",
-  "กันยายน",
-  "ตุลาคม",
-  "พฤศจิกายน",
-  "ธันวาคม"
-];
-
 function DateSetter({monthYear, setMonthYear}: {
   monthYear: MonthYear_t,
-  setMonthYear: React.Dispatch<React.SetStateAction<MonthYear_t>>
+  setMonthYear: ReactState<MonthYear_t> 
 })
 {
   
@@ -79,44 +51,43 @@ function DateSetter({monthYear, setMonthYear}: {
   )
 }
 
-function ValueSetter({name, value, setValue}: {
-  name: string,
+function ValueSetter({propertyName, value, setValue}: {
+  propertyName: string,
   value: PriceValues_t,
   setValue: ReactState<PriceValues_t> 
 })
 {
   const HandlePriceChange = (newValue: number) =>
   {
-    let newPriceValues = {...value, [name]: newValue};
+    let newPriceValues = {...value, [propertyName]: newValue};
+
     localStorage.setItem("priceValues", JSON.stringify(newPriceValues));
-    setValue(newPriceValues); // Wtf is this syntax my guy
+    setValue(newPriceValues); 
   }
   
   return (
     <div className="flex justify-between items-center h-16 w-full px-5">
-      <span className="">{name}</span>
+      <span className="">{propertyName}</span>
       <label className="input input-success validator w-45">
         <input type="number" className="" min="1" max="9999" onChange={(e) => HandlePriceChange(Number(e.target.value))}
-               required value={value[name] || -1}/>
+               required value={value[propertyName] || -1}/>
         <span className="label">บาท</span>
       </label>
     </div>
   )
 }
 
-
-function DynamicValueSetter({name, rentList, setRentList, apartmentName} : {name: string, rentList: { [key: string]: Apartment_t }, setRentList: ReactState<{ [key: string]: Apartment_t }>, apartmentName: string})
-{
-  const [unitAfter, setUnitAfter] = useState<number>(0);
+function DynamicValueSetter({propertyName, rentList, setRentList, apartmentName} : {propertyName: "water" | "electricity" | "name", rentList: { [key: string]: Apartment }, setRentList: ReactState<{ [key: string]: Apartment }>, apartmentName: string})
+{ 
+  const [unitAfter, setUnitAfter] = useState<number | string>(0);
   
-  const HandleRentChange = (value: number) =>
+  const HandleValueChange = (value: string | number) =>
   {
-    const newRentList: { [key: string]: Apartment_t } = {...rentList};
-    if (!newRentList[apartmentName])
-    {
-      newRentList[apartmentName] = {"ค่าไฟฟ้า": 0, "ค่าน้ำประปา": 0, "นาม": "",};
-    }
-    newRentList[apartmentName][name] = value;
+    if (propertyName != "name") value = Number(value);
+    const newRentList: { [key: string]: Apartment } = {...rentList};
+    if (!newRentList[apartmentName]) newRentList[apartmentName] = new Apartment(apartmentName);
+    newRentList[apartmentName].SetProperty(propertyName, value);
+
     setUnitAfter(value);
     setRentList(newRentList);
     localStorage.setItem("rentList", JSON.stringify(newRentList));
@@ -124,26 +95,27 @@ function DynamicValueSetter({name, rentList, setRentList, apartmentName} : {name
   
   useEffect(() =>
   {
-    if (rentList[apartmentName]) setUnitAfter(rentList[apartmentName][name] as number);
+    if (rentList[apartmentName]) 
+    {
+      setUnitAfter(rentList[apartmentName].GetProperty(propertyName) || "");
+    }
     else setUnitAfter(0);
   }, [apartmentName, rentList])
   
   return (
     <div className="flex justify-between items-center h-16 w-full px-5">
-      <span className="">{name}</span>
+      <span className="">{EnlgishToThai[propertyName]}</span>
       <div className="flex items-center">
         <label className="input input-success validator w-40">
-          <input type="number" className="" min="0" value={unitAfter} onChange={(e) =>
-          {
-            HandleRentChange(Number(e.target.value));
-          }}/>
-          <span className="label">Unit</span>
+          <input type={propertyName != "name" ? "number": "text"} className="" min="0" value={unitAfter} onChange={(e) => HandleValueChange(e.target.value) }/>
+          {propertyName != "name" ? <span className="label">Unit</span> : <></>}
         </label>
       </div>
     </div>
   )
 }
 
+// TODO: Remove this 
 function NameSetter({rentList, setRentList, apartmentName} : {rentList: { [key: string]: Apartment_t }, setRentList: ReactState<{ [key: string]: Apartment_t }>, apartmentName: string})
 {
   const [name, setName] = useState<string>("");
@@ -191,7 +163,7 @@ function Card({children}: { children: ReactNode })
 
 function Card1Content()
 {
-  const [priceValues, setPriceValues] = useState<PriceValues_t>({...defaultPriceValues});
+  const [priceValues, setPriceValues] = useState<PriceValues_t>(GlobalFees.GetState());
   const [monthYear, setMonthYear] = useState({
     month: thaiMonths[currentMonth],
     year: currentYear
@@ -213,23 +185,23 @@ function Card1Content()
   return (
     <>
       <h1 className="w-full text-2xl flex justify-center items-center h-20 font-semibold">ข้อมูลส่วนรวม</h1>
-      <ValueSetter name="ค่าเช่า" value={priceValues} setValue={setPriceValues}/>
-      <ValueSetter name="ค่าบริการส่วนกลาง" value={priceValues} setValue={setPriceValues}/>
-      <ValueSetter name="ค่าจัดการขยะมูลฝอย" value={priceValues} setValue={setPriceValues}/>
-      <ValueSetter name="ราคาไฟฟ้า (ต่อ unit)" value={priceValues} setValue={setPriceValues}/>
-      <ValueSetter name="ราคาน้ำ (ต่อ unit)" value={priceValues} setValue={setPriceValues}/>
+      <ValueSetter propertyName="ค่าเช่า" value={priceValues} setValue={setPriceValues}/>
+      <ValueSetter propertyName="ค่าบริการส่วนกลาง" value={priceValues} setValue={setPriceValues}/>
+      <ValueSetter propertyName="ค่าจัดการขยะมูลฝอย" value={priceValues} setValue={setPriceValues}/>
+      <ValueSetter propertyName="ราคาไฟฟ้า (ต่อ unit)" value={priceValues} setValue={setPriceValues}/>
+      <ValueSetter propertyName="ราคาน้ำ (ต่อ unit)" value={priceValues} setValue={setPriceValues}/>
       <DateSetter monthYear={monthYear} setMonthYear={setMonthYear}/>
     </>
   )
 }
 
-function Card2Content({apartmentName, setApartmentName} : { apartmentName: string, setApartmentName: React.Dispatch<React.SetStateAction<string>> })
+function Card2Content({apartmentName, setApartmentName} : { apartmentName: string, setApartmentName: ReactState<string>})
 {
   const buildingSelect = apartmentBuildings.map(name => <option key={name}>{name}</option>);
   const floorSelect = apartmentFloors.map(name => <option key={name}>{name}</option>);
   const numberSelect = apartmentNumbers.map(name => <option key={name}>{name}</option>);
   
-  const [rentList, setRentList] = useState<{ [key: string]: Apartment_t }>({});
+  const [rentList, setRentList] = useState<{ [key: string]: Apartment }>({});
   const [deleteButton, setDeleteButton] = useState<boolean>(false);
   
   useEffect(() =>
@@ -237,7 +209,7 @@ function Card2Content({apartmentName, setApartmentName} : { apartmentName: strin
     const interval = setInterval(() =>
     {
       if (localStorage.getItem("rentList"))
-        setRentList(JSON.parse(localStorage.getItem("rentList") as string));
+        setRentList(Apartment.LoadRentList(JSON.parse(localStorage.getItem("rentList") as string)));
     }, 1000);
     return () => clearInterval(interval);
   }, [])
@@ -263,6 +235,7 @@ function Card2Content({apartmentName, setApartmentName} : { apartmentName: strin
   
   return (
     <>
+
       <div className="w-full flex justify-center items-center h-20 font-semibold *:text-xl">
         <div className="rounded-md border-2 border-primary bg-white w-62 flex justify-center">
           <span className="text-lg min-w-15 flex items-center justify-center">ห้อง :</span>
@@ -280,10 +253,11 @@ function Card2Content({apartmentName, setApartmentName} : { apartmentName: strin
           </select>
         </div>
       </div>
-      <NameSetter apartmentName={apartmentName} rentList={rentList} setRentList={setRentList}/>
-      <DynamicValueSetter name="ค่าไฟฟ้า" rentList={rentList} setRentList={setRentList} apartmentName={apartmentName}/>
-      <DynamicValueSetter name="ค่าน้ำประปา" rentList={rentList} setRentList={setRentList}
-                          apartmentName={apartmentName}/>
+      
+      <DynamicValueSetter propertyName="name" rentList={rentList} setRentList={setRentList} apartmentName={apartmentName}/>
+      <DynamicValueSetter propertyName="electricity" rentList={rentList} setRentList={setRentList} apartmentName={apartmentName}/>
+      <DynamicValueSetter propertyName="water" rentList={rentList} setRentList={setRentList} apartmentName={apartmentName}/>
+
       <div className="w-full flex justify-center items-center h-40 gap-10">
         <button className="btn btn-warning" onClick={ClearCurrentApartment}>เคลียร์ข้อมูลห้องนี้</button>
         <button className="btn btn-error"

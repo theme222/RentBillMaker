@@ -1,4 +1,4 @@
-class GlobalFees 
+export class GlobalFees 
 {
   public static rent: number = 1200;
   public static serviceFee: number = 750;
@@ -24,9 +24,20 @@ class GlobalFees
       this.waterPerUnit = parsed.waterPerUnit;
     }
   }
+
+  public static GetState(): PriceValues_t
+  {
+    return {
+      "ค่าเช่า": this.rent,
+      "ค่าบริการส่วนกลาง": this.serviceFee,
+      "ค่าจัดการขยะมูลฝอย": this.wasteFee,
+      "ราคาไฟฟ้า (ต่อ unit)": this.electricityPerUnit,
+      "ราคาน้ำ (ต่อ unit)": this.waterPerUnit
+    };
+  }
 }
 
-class Apartment
+export class Apartment
 {
   roomName: string = "";
   name: string = "";
@@ -34,7 +45,7 @@ class Apartment
   water: number = 0;
   miscillaneous?: {[key: string]: number};
 
-  constructor( roomName?: string, name?: string, electricity?: number, water?: number, miscillaneous?: {[key: string]: number})
+  constructor(roomName?: string, name?: string, electricity?: number, water?: number, miscillaneous?: {[key: string]: number})
   {
     if (roomName) this.roomName = roomName;
     if (name) this.name = name;
@@ -47,6 +58,39 @@ class Apartment
   {
     const apartment = new Apartment(obj.roomName, obj.name, obj.electricity, obj.water, obj.miscillaneous);
     return apartment 
+  }
+
+  GetProperty(key: string): number | string | null 
+  {
+    if (key === "electricity") return this.electricity;
+    else if (key === "water") return this.water;
+    else if (key === "roomName") return this.roomName;
+    else if (key === "name") return this.name;
+    else return null;
+  }
+
+  SetProperty(key: string, value: number | string)
+  {
+    if (key === "electricity") this.electricity = value as number;
+    else if (key === "water") this.water = value as number;
+    else if (key === "roomName") this.roomName = value as string;
+    else if (key === "name") this.name = value as string;
+    else console.error("Invalid property key: " + key);
+  }
+
+  public static LoadRentList(obj: any): {[key: string]: Apartment}
+  {
+    const rentList: {[key: string]: Apartment} = {};
+    for (const key in obj) 
+    {
+      if (obj.hasOwnProperty(key)) 
+      {
+        const apartment = Apartment.Load(obj[key]);
+        apartment.roomName = key;
+        rentList[key] = apartment;
+      }
+    }
+    return rentList;
   }
 }
 
