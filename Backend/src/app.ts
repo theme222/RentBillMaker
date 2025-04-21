@@ -1,8 +1,9 @@
 import express, {NextFunction, Request, Response} from "express";
 import "dotenv/config";
-import { google } from "googleapis";
+import {StartAPI, sheets} from "./sheets";
 
 const app = express();
+StartAPI().then(() => {});
 
 function RequestLogger(req: Request, res: Response, next: NextFunction)
 {
@@ -10,6 +11,18 @@ function RequestLogger(req: Request, res: Response, next: NextFunction)
   next();
 }
 app.use(RequestLogger)
+
+async function GetSheet(req: Request, res: Response)
+{
+  const getRows = await sheets.spreadsheets.values.get({
+    spreadsheetId: process.env.SPREADSHEET_ID,
+    range: "Template",
+  })
+  res.send(getRows.data);
+}
+app.get("/getSheet", GetSheet);
+
+
 
 function Ping(req: Request, res: Response)
 {

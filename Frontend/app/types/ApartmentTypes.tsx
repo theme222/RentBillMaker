@@ -43,20 +43,20 @@ export class Apartment
   name: string = "";
   electricity: number = 0;
   water: number = 0;
-  miscillaneous?: {[key: string]: number};
+  miscellaneous?: {[key: string]: number};
 
-  constructor(roomName?: string, name?: string, electricity?: number, water?: number, miscillaneous?: {[key: string]: number})
+  constructor(roomName?: string, name?: string, electricity?: number, water?: number, miscellaneous?: {[key: string]: number})
   {
     if (roomName) this.roomName = roomName;
     if (name) this.name = name;
     if (electricity) this.electricity = electricity;
     if (water) this.water = water;
-    if (miscillaneous) this.miscillaneous = miscillaneous;
+    if (miscellaneous) this.miscellaneous = miscellaneous;
   }
 
   public static Load(obj: any): Apartment
   {
-    const apartment = new Apartment(obj.roomName, obj.name, obj.electricity, obj.water, obj.miscillaneous);
+    const apartment = new Apartment(obj.roomName, obj.name, obj.electricity, obj.water, obj.miscellaneous);
     return apartment 
   }
 
