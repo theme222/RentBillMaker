@@ -209,7 +209,7 @@ function Card2Content({apartmentName, setApartmentName} : { apartmentName: strin
     const interval = setInterval(() =>
     {
       if (localStorage.getItem("rentList"))
-        setRentList(Apartment.LoadRentList(JSON.parse(localStorage.getItem("rentList") as string)));
+        setRentList(Apartment.LoadFromRentList(JSON.parse(localStorage.getItem("rentList") as string)));
     }, 1000);
     return () => clearInterval(interval);
   }, [])
@@ -283,17 +283,18 @@ function RentTableInfo({setApartmentName} : { setApartmentName: ReactState<strin
       let newWater: ReactElement[] = [];
       let newName: ReactElement[] = [];
       
-      const rentList = JSON.parse(localStorage.getItem("rentList") as string);
+      const rentList = Apartment.LoadFromRentList(JSON.parse(localStorage.getItem("rentList") as string));
       for (let name of apartmentNames)
       {
         let currentElectric: number = 0;
         let currentWater: number = 0;
         let currentName: string = "";
+        
         if (rentList[name])
         {
-          currentElectric = Number(rentList[name]["ค่าไฟฟ้า"]) || 0;
-          currentWater = Number(rentList[name]["ค่าน้ำประปา"]) || 0;
-          currentName = rentList[name]["นาม"] || "";
+          currentElectric = Number(rentList[name].electricity);
+          currentWater = Number(rentList[name].water);
+          currentName = rentList[name].name;
         }
         
         newElectric.push(<th key={name}

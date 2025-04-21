@@ -78,8 +78,9 @@ export class Apartment
     else console.error("Invalid property key: " + key);
   }
 
-  public static LoadRentList(obj: any): {[key: string]: Apartment}
+  public static LoadFromRentList(obj: any): {[key: string]: Apartment}
   {
+    // Insert a list of objects that may have the same fields as this class and it will add the methods associated and strip away any other properties
     const rentList: {[key: string]: Apartment} = {};
     for (const key in obj) 
     {

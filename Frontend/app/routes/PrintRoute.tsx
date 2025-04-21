@@ -35,48 +35,48 @@ function HalfPage({isCopy, apartmentInfo, apartmentName}: { isCopy: boolean, apa
       <div className="flex justify-center items-center w-full">
         <table className="table w-11/12">
           <thead>
-              <th className="w-10">ลำดับ</th>
-              <th className="text-center">รายการ</th>
-              <th className="w-20">จำนวนเงิน</th>
-            </thead>
-            <tbody className="*:*:odd:text-right"> 
-              <tr>
-                <td>1</td>
-                <td>ค่าเช่าห้อง</td>
-                <td>1000</td>
-              </tr>
-              <tr>
-                <td>2</td>
-                <td>ค่าบริการส่วนกลาง</td>
-                <td>1000</td>
-              </tr>
-              <tr>
-                <td>3</td>
-                <td>ค่ารักษาความปลอดภัย</td>
-                <td>1000</td>
-              </tr>
-              <tr>
-                <td>4</td>
-                <td>ค่าไฟฟ้า</td>
-                <td>1000</td>
-              </tr>
-              <tr>
-                <td>5</td>
-                <td>ค่าน้ำประปา</td>
-                <td>1000</td>
-              </tr>
-              <tr>
-                <td>6</td>
-                <td>ค่าจัดการขยะมูลฝอย</td>
-                <td>1000</td>
-              </tr>
-              <tr className="font-bold">
-                <td></td>
-                <td>รวมเงิน</td>
-                <td>3000</td>
-              </tr>
-            </tbody>
-          </table>
+            <th className="w-10">ลำดับ</th>
+            <th className="text-center">รายการ</th>
+            <th className="w-20">จำนวนเงิน</th>
+          </thead>
+          <tbody className="*:*:odd:text-right">
+            <tr>
+              <td>1</td>
+              <td>ค่าเช่าห้อง</td>
+              <td>1000</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>ค่าบริการส่วนกลาง</td>
+              <td>1000</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>ค่ารักษาความปลอดภัย</td>
+              <td>1000</td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td>ค่าไฟฟ้า</td>
+              <td>1000</td>
+            </tr>
+            <tr>
+              <td>5</td>
+              <td>ค่าน้ำประปา</td>
+              <td>1000</td>
+            </tr>
+            <tr>
+              <td>6</td>
+              <td>ค่าจัดการขยะมูลฝอย</td>
+              <td>1000</td>
+            </tr>
+            <tr className="font-bold">
+              <td></td>
+              <td>รวมเงิน</td>
+              <td>3000</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   )
