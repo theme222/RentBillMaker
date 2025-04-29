@@ -6,7 +6,9 @@ export const ThaiToEnglish: { [key: string]: string } = {
     "นาม": "name",
     "ห้อง": "roomName",
     "ค่าใช้จ่ายอื่นๆ": "miscellaneous",
-    "รวม": "total"
+    "รวม": "total",
+    "ปี": "year",
+    "เดือน": "month",
 }
 
 export const EnlgishToThai: { [key: string]: string } = {};

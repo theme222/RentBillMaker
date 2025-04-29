@@ -1,0 +1,81 @@
+{
+  "apartmentList": [
+    {
+      "roomName": "A101",
+      "name": "สมชาย ใจดี",
+      "electricity": 320,
+      "water": 120,
+      "miscellaneous": []
+    },
+    {
+      "roomName": "A102",
+      "name": "สุภาพร ศรีสุข",
+      "electricity": 280,
+      "water": 110,
+      "miscellaneous": []
+    },
+    {
+      "roomName": "A103",
+      "name": "วีระชัย มหาดไทย",
+      "electricity": 300,
+      "water": 100,
+      "miscellaneous": [
+        {
+          "ค่าซ่อมแซมพัดลม": 150
+        }
+      ]
+    },
+    {
+      "roomName": "A104",
+      "name": "ชลธิชา แก้วใส",
+      "electricity": 250,
+      "water": 90,
+      "miscellaneous": []
+    },
+    {
+      "roomName": "A105",
+      "name": "ธนพล พงษ์สวัสดิ์",
+      "electricity": 400,
+      "water": 130,
+      "miscellaneous": [
+        {
+          "ค่าทำความสะอาด": 200
+        }
+      ]
+    },
+    {
+      "roomName": "A106",
+      "name": "กมลวรรณ ทองแท้",
+      "electricity": 270,
+      "water": 105,
+      "miscellaneous": []
+    },
+    {
+      "roomName": "A107",
+      "name": "อนุชา ใจกล้า",
+      "electricity": 290,
+      "water": 115,
+      "miscellaneous": []
+    },
+    {
+      "roomName": "A108",
+      "name": "ปรียานุช สุขใจ",
+      "electricity": 310,
+      "water": 125,
+      "miscellaneous": [
+        {
+          "ค่าจอดรถ": 300
+        }
+      ]
+    }
+  ],
+  "globalFees": {
+    "rent": 1200,
+    "serviceFee": 750,
+    "wasteFee": 40,
+    "electricityPerUnit": 9,
+    "waterPerUnit": 35,
+    "currentMonth": "เมษายน",
+    "currentYear": 2568
+  }
+}
