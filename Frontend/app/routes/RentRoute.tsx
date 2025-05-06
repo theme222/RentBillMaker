@@ -76,12 +76,11 @@ function DateSetter() {
     .map((year) => <option key={year}>{year}</option>);
 
   return (
-    <div className="flex justify-between items-center h-16 w-full px-5">
+    <div className="flex justify-center items-center gap-5 h-16 w-full px-5">
       <span className="">ประจำเดือน</span>
-      <div className="join">
         <select
           onChange={(e) => HandleMonthChange(e.target.value)}
-          className="select select-secondary rounded-md join-item w-25"
+          className="select select-secondary rounded-md join-item w-30"
           value={globalFeesState["เดือน"]}
         >
           {monthElement}
@@ -93,7 +92,6 @@ function DateSetter() {
         >
           {yearElement}
         </select>
-      </div>
     </div>
   );
 }
@@ -110,7 +108,7 @@ function ValueSetter({ propertyName }: { propertyName: string }) {
   };
 
   return (
-    <div className="flex justify-between items-center h-16 w-full px-5">
+    <div className="flex justify-between items-center h-16 w-100 px-5">
       <span className="">{propertyName}</span>
       <label className="input input-success validator w-45">
         <input
@@ -157,7 +155,7 @@ function DynamicValueSetter({
   }, [apartmentName, rentList]);
 
   return (
-    <div className="flex justify-between items-center h-16 w-full px-5">
+    <div className="flex justify-between items-center h-16 w-100 px-5">
       <span className="">{EnlgishToThai[propertyName]}</span>
       <div className="flex items-center">
         <label className="input input-success validator w-40">
@@ -177,8 +175,10 @@ function DynamicValueSetter({
 
 function Card({ children }: { children: ReactNode }) {
   return (
-    <div className="w-1/2 bg-base-100 border-2 border-base-200 rounded-md shadow-md h-full">
-      {children}
+    <div className="w-full flex justify-center items-center">
+      <div className="w-11/12 bg-white border-md shadow-md">
+        {children}
+      </div>
     </div>
   );
 }
@@ -198,15 +198,19 @@ function Card1Content() {
 
   return (
     <>
-      <h1 className="w-full text-2xl flex justify-center items-center h-20 font-semibold">
-        ข้อมูลส่วนรวม
-      </h1>
+    <h1 className="w-full text-2xl flex justify-center items-center h-20 font-semibold">
+      ข้อมูลส่วนรวม
+    </h1>
+    <div className="w-full h-full grid grid-rows-2 grid-cols-3 justify-items-center">
       <ValueSetter propertyName="ค่าเช่า" />
       <ValueSetter propertyName="ค่าบริการส่วนกลาง" />
+      <ValueSetter propertyName="ค่ารักษาความปลอดภัย" />
       <ValueSetter propertyName="ค่าจัดการขยะมูลฝอย" />
       <ValueSetter propertyName="ราคาไฟฟ้า (ต่อ unit)" />
       <ValueSetter propertyName="ราคาน้ำ (ต่อ unit)" />
+      <div className=""></div>
       <DateSetter />
+    </div>
     </>
   );
 }
@@ -285,23 +289,10 @@ function Card2Content() {
         </div>
       </div>
 
-      <DynamicValueSetter propertyName="name" />
-      <DynamicValueSetter propertyName="electricity" />
-      <DynamicValueSetter propertyName="water" />
-
-      <div className="w-full flex justify-center items-center h-40 gap-10">
-        <button className="btn btn-warning" onClick={() => ""}>
-          เคลียร์ข้อมูลห้องนี้
-        </button>
-        <button className="btn btn-error" onClick={() => ""}>
-          {deleteButton ? "กดอีกครั้งเพื่อลบทิ้ง" : "เคลียร์ข้อมูลห้องทั้งหมด"}
-        </button>
-        <button
-          className="btn btn-primary"
-          onClick={() => console.log(rentList, globalFeesState)}
-        >
-          Print rentlist
-        </button>
+      <div className="w-full grid grid-rows-1 grid-cols-3 justify-items-center pb-2">
+        <DynamicValueSetter propertyName="name" />
+        <DynamicValueSetter propertyName="electricity" />
+        <DynamicValueSetter propertyName="water" />
       </div>
     </>
   );
@@ -497,16 +488,12 @@ export default function RentRoute() {
     >
       <GridLayout>
         <PageTitle pageName="ตั้งค่าเริ่มต้น" />
-        <div className="flex justify-center items-center w-full h-120">
-          <div className="flex justify-center items-center w-11/12 h-full gap-10">
-            <Card>
-              <Card1Content />
-            </Card>
-            <Card>
-              <Card2Content />
-            </Card>
-          </div>
-        </div>
+          <Card>
+            <Card1Content />
+          </Card>
+          <Card>
+            <Card2Content />
+          </Card>
         <RentTableInfo />
       </GridLayout>
     </RentRouteContext.Provider>

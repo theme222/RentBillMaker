@@ -5,6 +5,7 @@ export class GlobalFees {
   public static rent: number = 1200;
   public static serviceFee: number = 750;
   public static wasteFee: number = 40;
+  public static safetyFee: number = 350;
   public static electricityPerUnit: number = 9;
   public static waterPerUnit: number = 35;
   public static currentMonth: string = thaiMonths[currentDate.getMonth()]; // TODO: Might need to -1 here
@@ -19,12 +20,13 @@ export class GlobalFees {
     this.rent = obj.rent;
     this.serviceFee = obj.serviceFee;
     this.wasteFee = obj.wasteFee;
+    this.safetyFee = obj.safetyFee;
     this.electricityPerUnit = obj.electricityPerUnit;
     this.waterPerUnit = obj.waterPerUnit;
   }
 
   public static LoadFromState(obj: any) {
-    // Loads global fees from the backend
+    // Loads global fees from the frontend
     this.rent = obj["ค่าเช่า"];
     this.serviceFee = obj["ค่าบริการส่วนกลาง"];
     this.wasteFee = obj["ค่าจัดการขยะมูลฝอย"];
@@ -39,6 +41,7 @@ export class GlobalFees {
       rent: this.rent,
       serviceFee: this.serviceFee,
       wasteFee: this.wasteFee,
+      safetyFee: this.safetyFee,
       electricityPerUnit: this.electricityPerUnit,
       waterPerUnit: this.waterPerUnit,
       currentMonth: this.currentMonth,
@@ -47,13 +50,14 @@ export class GlobalFees {
   }
 
   public static GetMonthYear(): string {
-    return `${this.currentMonth} - ${this.currentYear}`;
+    return `${this.currentMonth} ${this.currentYear}`;
   }
 
   public static GetState(): PriceValues_t {
     return {
       ค่าเช่า: this.rent,
       ค่าบริการส่วนกลาง: this.serviceFee,
+      ค่ารักษาความปลอดภัย: this.safetyFee,
       ค่าจัดการขยะมูลฝอย: this.wasteFee,
       "ราคาไฟฟ้า (ต่อ unit)": this.electricityPerUnit,
       "ราคาน้ำ (ต่อ unit)": this.waterPerUnit,
@@ -110,6 +114,15 @@ export class Apartment {
     else console.error("Invalid property key: " + key);
   }
 
+  ValidApartment(): boolean
+  {
+    if (!this.roomName) return false;
+    if (!this.name) return false;
+    if (!this.water) return false;
+    if (!this.electricity) return false;
+    return true;
+  }
+
   public static ApartmentListToRentList(obj: any[]): {
     [key: string]: Apartment;
   } {
@@ -131,6 +144,7 @@ export class Apartment {
     }
     return rentList;
   }
+
 }
 
 export interface Apartment_t {
@@ -144,6 +158,7 @@ export interface Apartment_t {
 export interface PriceValues_t {
   ค่าเช่า: number;
   ค่าบริการส่วนกลาง: number;
+  ค่ารักษาความปลอดภัย: number;
   ค่าจัดการขยะมูลฝอย: number;
   "ราคาไฟฟ้า (ต่อ unit)": number;
   "ราคาน้ำ (ต่อ unit)": number;

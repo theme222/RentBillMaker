@@ -66,6 +66,21 @@ export class Apartment {
     }
     return rentList;
   }
+
+  public static ExportBillList(prevList: Apartment[], currentList: Apartment[]): Apartment[] {
+    const returnList: Apartment[] = [];
+    for (let i = 0; i < prevList.length; i++) {
+      let currentRoom = currentList[i];
+      let prevRoom = prevList[i];
+      let newRoom = new Apartment(currentRoom.roomName, currentRoom.name);
+
+      newRoom.electricity = (currentRoom.electricity - prevRoom.electricity) * GlobalFees.electricityPerUnit;
+      newRoom.water = (currentRoom.water - prevRoom.water) * GlobalFees.waterPerUnit;
+      newRoom.miscellaneous = currentRoom.miscellaneous;
+      returnList.push(newRoom);
+    }
+    return returnList;
+  }
 }
 
 export async function WriteApartmentSheet(apartmentList: Apartment[]) {
@@ -73,7 +88,7 @@ export async function WriteApartmentSheet(apartmentList: Apartment[]) {
   const sheetData = Apartment.DumpSheetData(apartmentList);
   sheetData.push(GlobalFees.DumpToList());
 
-  const result = await WriteSheet(sheetData, GlobalFees.GetFullDate());
+  const result = await WriteSheet(sheetData, GlobalFees.GetMonthYear());
   return result;
 }
 
@@ -113,6 +128,7 @@ export class GlobalFees {
   public static rent: number = 1200;
   public static serviceFee: number = 750;
   public static wasteFee: number = 40;
+  public static safetyFee: number = 350;
   public static electricityPerUnit: number = 9;
   public static waterPerUnit: number = 35;
   public static currentMonth: string = "มกราคม";
@@ -121,6 +137,7 @@ export class GlobalFees {
   public static LoadFromObject(obj: any) {
     GlobalFees.rent = obj.rent;
     GlobalFees.serviceFee = obj.serviceFee;
+    GlobalFees.safetyFee = obj.safetyFee;
     GlobalFees.wasteFee = obj.wasteFee;
     GlobalFees.electricityPerUnit = obj.electricityPerUnit;
     GlobalFees.waterPerUnit = obj.waterPerUnit;
@@ -132,8 +149,9 @@ export class GlobalFees {
     GlobalFees.rent = Number(sheetData[0]);
     GlobalFees.serviceFee = Number(sheetData[1]);
     GlobalFees.wasteFee = Number(sheetData[2]);
-    GlobalFees.electricityPerUnit = Number(sheetData[3]);
-    GlobalFees.waterPerUnit = Number(sheetData[4]);
+    GlobalFees.wasteFee = Number(sheetData[3]);
+    GlobalFees.electricityPerUnit = Number(sheetData[4]);
+    GlobalFees.waterPerUnit = Number(sheetData[5]);
   }
 
   public static DumpToList(): any[] {
@@ -141,6 +159,7 @@ export class GlobalFees {
     return [
       GlobalFees.rent,
       GlobalFees.serviceFee,
+      GlobalFees.safetyFee,
       GlobalFees.wasteFee,
       GlobalFees.electricityPerUnit,
       GlobalFees.waterPerUnit,
@@ -151,13 +170,14 @@ export class GlobalFees {
     return {
       rent: GlobalFees.rent,
       serviceFee: GlobalFees.serviceFee,
+      safetyFee: GlobalFees.safetyFee,
       wasteFee: GlobalFees.wasteFee,
       electricityPerUnit: GlobalFees.electricityPerUnit,
       waterPerUnit: GlobalFees.waterPerUnit,
     };
   }
 
-  public static GetFullDate(): string {
-    return `${GlobalFees.currentMonth} - ${GlobalFees.currentYear}`;
+  public static GetMonthYear(): string {
+    return `${GlobalFees.currentMonth} ${GlobalFees.currentYear}`;
   }
 }

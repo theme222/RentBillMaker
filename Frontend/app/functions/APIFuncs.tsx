@@ -30,3 +30,15 @@ export async function GetRentList(monthYear: string) {
 
   if (response) return response.data;
 }
+
+export async function GetBillList(monthYear: string) {
+  const response = await axios
+    .get(`${API_URL}/api/bill`, {
+      params: {
+        monthYear: monthYear,
+      },
+    })
+    .catch(HandleError);
+
+  if (response) return response.data;
+}
