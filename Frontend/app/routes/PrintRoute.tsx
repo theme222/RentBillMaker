@@ -83,6 +83,8 @@ function PrintConfig()
 function HalfPage({ roomName, isCopy }: { roomName: string, isCopy: boolean })
 {
   const { rentList, dataHasLoaded } = useContext(PrintRouteContext) as printRouteContextExistsInterface;
+  if (rentList[roomName].water < 150) rentList[roomName].water = 150;
+  if (rentList[roomName].electricity < 150) rentList[roomName].electricity = 150;
 
   let totalPrice = GlobalFees.rent + GlobalFees.serviceFee + GlobalFees.safetyFee + rentList[roomName].water + rentList[roomName].electricity + GlobalFees.wasteFee
 
