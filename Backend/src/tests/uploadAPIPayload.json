@@ -70,7 +70,7 @@
     }
   ],
   "globalFees": {
-    "rent": 1200,
+    "rent": 1300,
     "serviceFee": 750,
     "wasteFee": 40,
     "electricityPerUnit": 9,

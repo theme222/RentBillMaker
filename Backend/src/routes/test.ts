@@ -1,6 +1,6 @@
 import express, {NextFunction, Request, Response} from "express";
 import "dotenv/config";
-import {LoadSheet, sheets} from "../functions/sheets";
+import { LoadApartment, WriteApartment } from "../functions/sql";
 import {Apartment} from "../types/apartment";
 
 const router = express.Router();

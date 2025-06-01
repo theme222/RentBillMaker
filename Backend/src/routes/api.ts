@@ -1,11 +1,11 @@
 import express, { NextFunction, Request, Response } from "express";
 import { Apartment, GlobalFees, WriteApartmentSheet } from "../types/apartment";
 import {
-  CheckSheetIdExists,
-  GenSheetId,
-  LoadSheet,
-  sheets,
-} from "../functions/sheets";
+  LoadApartment,
+  WriteApartment,
+  LoadGlobalFees,
+  WriteGlobalFees
+} from "../functions/sql"
 import { thaiMonths } from "../types/dates";
 
 const router = express.Router();
@@ -20,16 +20,18 @@ async function UpdateRentList(req: Request, res: Response) {
   */
   const data = req.body;
 
-  if (!data || !data.rentList || !data.globalFees) {
+  if (!data || !data.apartmentList || !data.globalFees) {
     res.status(400).send("Data not found");
     return;
   }
 
-  const apartmentList = Apartment.ApartmentListFromRentList(data.rentList);
+  const apartmentList = Apartment.ApartmentListFromRentList(data.apartmentList);
 
   GlobalFees.LoadFromObject(data.globalFees);
-  const result = await WriteApartmentSheet(apartmentList);
-  res.status(200).json(result);
+  await WriteApartment(apartmentList);
+  await WriteGlobalFees();
+
+  res.status(200).send("Success");
 }
 
 router.post("/update", UpdateRentList);
@@ -38,23 +40,23 @@ async function GetRentList(req: Request, res: Response) {
   /*
    * query:
    *   monthYear: "month(thai) year(buddhist)"
+   * returns:
+   *  apartmentList:
+   *  globalFees
    */
-  const data: string = req.query.monthYear as string;
+  const data: string = req.query.monthYear as string; // monthYear
 
   if (!data) {
     res.status(400).send("Invalid query parameters");
     return;
   }
 
-  const sheetData = (await LoadSheet(data)).data.values;
+  let sqlData = await LoadApartment(data);
+  GlobalFees.LoadMonthYear(data);
 
-  const apartmentList: Apartment[] = Apartment.LoadSheetData(
-    sheetData.slice(0, sheetData.length - 1),
-  );
-  GlobalFees.LoadFromSheet(sheetData[sheetData.length - 1]);
   res.status(200).json({
-    apartmentList: apartmentList,
-    globalFees: GlobalFees.DumpToObject(),
+    apartmentList: Apartment.ApartmentListFromSQL(sqlData),
+    globalFees: await LoadGlobalFees(),
   });
 }
 
@@ -86,17 +88,14 @@ async function GetBillList(req: Request, res: Response) {
   }
   let prevMonthYear = `${prevMonth} ${prevYear}`;
 
-  let sheetData = (await LoadSheet(currentMonthYear)).data.values;
-  const currentApartmentList: Apartment[] = Apartment.LoadSheetData(
-    sheetData.slice(0, sheetData.length - 1),
-  );
+  let currentData = await LoadApartment(currentMonthYear);
+  const currentApartmentList: Apartment[] = Apartment.ApartmentListFromSQL(currentData);
   // Load most recent global fees
-  GlobalFees.LoadFromSheet(sheetData[sheetData.length - 1]);
+  GlobalFees.LoadMonthYear(currentMonthYear);
+  GlobalFees.LoadFromObject(await LoadGlobalFees());
 
-  sheetData = (await LoadSheet(prevMonthYear)).data.values;
-  const prevApartmentList: Apartment[] = Apartment.LoadSheetData(
-    sheetData.slice(0, sheetData.length - 1),
-  );
+  let prevData = await LoadApartment(prevMonthYear);
+  const prevApartmentList: Apartment[] = Apartment.ApartmentListFromSQL(currentData);
 
   const billList = Apartment.ExportBillList(prevApartmentList, currentApartmentList);
   res.status(200).json({

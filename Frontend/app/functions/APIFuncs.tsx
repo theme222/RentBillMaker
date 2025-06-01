@@ -8,10 +8,10 @@ function HandleError(error: any) {
   console.error(error);
 }
 
-export async function UpdateRentList(rentList: Apartment[], globalFees: any) {
+export async function UpdateRentList(apartmentList: Apartment[], globalFees: any) {
   const response = await axios
     .post(`${API_URL}/api/update`, {
-      rentList: rentList,
+      apartmentList: apartmentList,
       globalFees: globalFees,
     })
     .catch(HandleError);

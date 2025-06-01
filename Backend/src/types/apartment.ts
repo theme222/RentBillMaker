@@ -21,6 +21,10 @@ export class Apartment {
     if (miscellaneous) this.miscellaneous = miscellaneous;
   }
 
+  public DumpToList(): any[] {
+    return [this.roomName, this.name, this.electricity, this.water, JSON.stringify(this.miscellaneous)];
+  }
+
   public static LoadFromObject(obj: any): Apartment {
     // @ts-ignore
     return new Apartment(...Object.values(obj));
@@ -32,6 +36,14 @@ export class Apartment {
     if (list[3]) list[3] = Number(list[3]);
     if (list[4]) list[4] = JSON.parse(list[4] as string);
     return new Apartment(...list);
+  }
+
+  public static ApartmentListFromSQL(list: any[]): Apartment[] {
+    let returnList: Apartment[] = []
+    for (let obj of list) {
+      returnList.push(Apartment.LoadFromObject(obj));
+    }
+    return returnList
   }
 
   public static ApartmentListFromRentList(rentList: {
@@ -179,5 +191,11 @@ export class GlobalFees {
 
   public static GetMonthYear(): string {
     return `${GlobalFees.currentMonth} ${GlobalFees.currentYear}`;
+  }
+
+  public static LoadMonthYear(monthYear: string) {
+    let splitData = monthYear.split(" ");
+    GlobalFees.currentMonth = splitData[0];
+    GlobalFees.currentYear = Number(splitData[1]);
   }
 }
