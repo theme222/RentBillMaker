@@ -21,8 +21,8 @@ export class Apartment {
     if (miscellaneous) this.miscellaneous = miscellaneous;
   }
 
-  public DumpToList(): any[] {
-    return [this.roomName, this.name, this.electricity, this.water, JSON.stringify(this.miscellaneous)];
+  public DumpToList(): any[] { // Dumps only values
+    return [this.name, this.electricity, this.water, JSON.stringify(this.miscellaneous)];
   }
 
   public static LoadFromObject(obj: any): Apartment {
@@ -44,12 +44,6 @@ export class Apartment {
       returnList.push(Apartment.LoadFromObject(obj));
     }
     return returnList
-  }
-
-  public static ApartmentListFromRentList(rentList: {
-    [key: string]: Apartment;
-  }): Apartment[] {
-    return Object.values(rentList);
   }
 
   public static LoadSheetData(list: any[][]): Apartment[] {

@@ -30,6 +30,7 @@ export async function TableExists(tableName: string): Promise<boolean> {
 }
 
 export async function CreateTable(sheetName: string) {
+  if (await TableExists(sheetName)) return;
   let DB = await InitializeDatabase();
 
   await DB.run(`CREATE TABLE IF NOT EXISTS "${sheetName}" (
@@ -68,16 +69,16 @@ export async function WriteApartment(apartmentList: Apartment[]) {
   let DB = await InitializeDatabase();
   try {
     await CreateTable(sheetName);
-    await DB.run(`DELETE FROM "${sheetName}" WHERE true`);
 
     for (let apartment of apartmentList)
     {
       console.log(apartment);
-      await DB.run(`INSERT INTO "${sheetName}" (roomName, name, electricity, water, miscellaneous) VALUES (?, ?, ?, ?, ?)`, ...apartment.DumpToList());
+      await DB.run(`UPDATE "${sheetName}" SET (name, electricity, water, miscellaneous) = (?, ?, ?, ?) WHERE roomName = ?`, apartment.name, apartment.electricity, apartment.water, JSON.stringify(apartment.miscellaneous), apartment.roomName);
     }
     await CommitDatabase(DB);
   }
   catch (e) {
+    console.log(e);
     await DB.run("ROLLBACK");
     await DB.close();
   }

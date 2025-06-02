@@ -25,7 +25,10 @@ async function UpdateRentList(req: Request, res: Response) {
     return;
   }
 
-  const apartmentList = Apartment.ApartmentListFromRentList(data.apartmentList);
+  const apartmentList: Apartment[] = [];
+  for (const apartment of data.apartmentList) {
+    apartmentList.push(new Apartment(apartment.roomName, apartment.name, apartment.electricity, apartment.water, apartment.miscellaneous));
+  }
 
   GlobalFees.LoadFromObject(data.globalFees);
   await WriteApartment(apartmentList);
